@@ -5,7 +5,7 @@ A single-admin class portal for branches, students, attendance, classes, and fee
 ## Set up Supabase
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. Open **SQL Editor → New query**, paste the contents of [`supabase/schema.sql`](./supabase/schema.sql), and click **Run**. This creates the records table and adds Muruva with the 22 September 2025 start date.
+2. Open **SQL Editor → New query**, paste the contents of [`supabase/schema.sql`](./supabase/schema.sql), and click **Run**. This creates or updates the records table for branches, students, classes, monthly fees, and attendance, and adds Muruva with the 22 September 2025 start date. If you ran an earlier version of the SQL, run this updated script again to add the new record kinds.
 3. In the Supabase project settings, copy the **Project URL** and the **service_role secret** key. Keep the service-role key private. The app accesses Supabase only from its server-side API.
 
 ## Deploy and sign in
@@ -26,9 +26,10 @@ The project is configured for `npm run build` with `dist` as the output director
 
 Use Node.js 20 or newer. Put the same environment variables in an untracked `.env.local` file (copy [`.env.example`](./.env.example) and fill it in), then run `npx vercel dev` from the project folder. The Vercel CLI may ask you to sign in or link the folder the first time. This starts both the Vercel API functions and frontend; `npm run dev` starts only the static Vite frontend and cannot perform login or database actions.
 
-## Studio records
+## Class records
 
 - Add, edit, and delete students; marking a student as left keeps their record and history.
 - Add and edit branches. Closing a branch blocks new students/classes but preserves existing records; it can be reopened later.
-- Add dated classes, record attendance, and review past attendance, former students, and payments in **History**.
-- Set each student's monthly fee and record one-, two-, or three-month payments, including partial balances and change returned.
+- Add dated classes and review past class attendance, former students, daily attendance registers, and fee statuses in **History**.
+- Mark each student's fee as paid or pending for any selected month; paid entries record whether payment was by cash or online.
+- Student age is calculated from date of birth and updates automatically each year. Student details also include place, parent name, contact number, and WhatsApp-group status.

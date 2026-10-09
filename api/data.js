@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { envReady, hasSession, json, supabaseRequest } from "../lib/server.js";
 
-const KINDS = new Set(["branches", "students", "classes", "payments"]);
+const KINDS = new Set(["branches", "students", "classes", "payments", "fees", "attendance"]);
 
 function validRecord(kind, payload) {
   if (!KINDS.has(kind) || !payload || typeof payload !== "object" || Array.isArray(payload)) return false;
@@ -18,6 +18,17 @@ function validRecord(kind, payload) {
       && Number.isInteger(Number(payload.months)) && [1, 2, 3].includes(Number(payload.months))
       && /^\d{4}-\d{2}-\d{2}$/.test(payload.date);
   }
+  if (kind === "fees") {
+    return typeof payload.studentId === "string" && typeof payload.branchId === "string"
+      && /^\d{4}-\d{2}$/.test(payload.month) && typeof payload.paid === "boolean"
+      && (!payload.paid || ["cash", "online"].includes(payload.method));
+  }
+  if (kind === "attendance") {
+    return /^\d{4}-\d{2}-\d{2}$/.test(payload.date)
+      && typeof payload.branchId === "string" && Array.isArray(payload.entries)
+      && payload.entries.every((entry) => typeof entry.studentId === "string"
+        && typeof entry.name === "string" && ["present", "absent"].includes(entry.status));
+  }
   return /^\d{4}-\d{2}-\d{2}$/.test(payload.date)
     && typeof payload.branchId === "string" && payload.branchId.length > 0;
 }
@@ -28,20 +39,6 @@ async function branchIsClosed(branchId) {
   return rows[0].payload.status === "closed";
 }
 
-async function ensureMuruva() {
-  const branches = await supabaseRequest("portal_records?select=id&kind=eq.branches&payload->>name=ilike.Muruva&limit=1");
-  if (branches.length) return;
-  await supabaseRequest("portal_records", {
-    method: "POST",
-    headers: { Prefer: "return=minimal" },
-    body: JSON.stringify([{
-      id: randomUUID(),
-      kind: "branches",
-      payload: { name: "Muruva", startDate: "2025-09-22", status: "open" }
-    }])
-  });
-}
-
 export default async function handler(req, res) {
   if (!envReady()) return json(res, 503, { error: "The portal is not configured. Set its server environment variables." });
   if (!hasSession(req)) return json(res, 401, { error: "Please sign in to continue." });
@@ -50,7 +47,6 @@ export default async function handler(req, res) {
   if (!KINDS.has(kind)) return json(res, 400, { error: "Choose a valid record type." });
 
   try {
-    await ensureMuruva();
     if (req.method === "GET") {
       const records = await supabaseRequest(`portal_records?select=id,payload&kind=eq.${kind}&order=created_at.asc`);
       return json(res, 200, records.map(({ id: recordId, payload }) => ({ ...payload, id: recordId })));
@@ -59,8 +55,43 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
       const payload = req.body || {};
       if (!validRecord(kind, payload)) return json(res, 400, { error: "Please provide the required record details." });
-      if (["students", "classes"].includes(kind) && await branchIsClosed(payload.branchId)) {
+      if (["students", "classes", "attendance"].includes(kind) && await branchIsClosed(payload.branchId)) {
         return json(res, 400, { error: "Choose an open branch for new students and classes." });
+      }
+      if (kind === "fees") {
+        const existing = await supabaseRequest(
+          `portal_records?select=id&kind=eq.fees&payload->>studentId=eq.${encodeURIComponent(payload.studentId)}&payload->>month=eq.${encodeURIComponent(payload.month)}&limit=1`
+        );
+        if (existing.length) {
+          const updated = await supabaseRequest(`portal_records?id=eq.${encodeURIComponent(existing[0].id)}&select=id,payload`, {
+            method: "PATCH",
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify({ payload })
+          });
+          if (!updated.length) return json(res, 404, { error: "That monthly fee record was not found." });
+          return json(res, 200, { ...updated[0].payload, id: updated[0].id });
+        }
+        try {
+          const created = await supabaseRequest("portal_records?select=id,payload", {
+            method: "POST",
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify([{ id: randomUUID(), kind, payload }])
+          });
+          return json(res, 201, { ...created[0].payload, id: created[0].id });
+        } catch (error) {
+          if (!error.message.includes('"code":"23505"')) throw error;
+          const raced = await supabaseRequest(
+            `portal_records?select=id&kind=eq.fees&payload->>studentId=eq.${encodeURIComponent(payload.studentId)}&payload->>month=eq.${encodeURIComponent(payload.month)}&limit=1`
+          );
+          if (!raced.length) throw error;
+          const updated = await supabaseRequest(`portal_records?id=eq.${encodeURIComponent(raced[0].id)}&select=id,payload`, {
+            method: "PATCH",
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify({ payload })
+          });
+          if (!updated.length) throw error;
+          return json(res, 200, { ...updated[0].payload, id: updated[0].id });
+        }
       }
       const created = await supabaseRequest("portal_records?select=id,payload", {
         method: "POST",
@@ -74,7 +105,7 @@ export default async function handler(req, res) {
       if (!id) return json(res, 400, { error: "A record ID is required." });
       const payload = req.body || {};
       if (!validRecord(kind, payload)) return json(res, 400, { error: "Please provide the required record details." });
-      if (["students", "classes"].includes(kind)) {
+      if (["students", "classes", "attendance"].includes(kind)) {
         const current = await supabaseRequest(`portal_records?select=payload&kind=eq.${kind}&id=eq.${encodeURIComponent(id)}&limit=1`);
         if (!current.length) return json(res, 404, { error: "That record was not found." });
         if (await branchIsClosed(payload.branchId) && current[0].payload.branchId !== payload.branchId) {

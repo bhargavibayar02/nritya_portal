@@ -23,7 +23,7 @@ button { cursor: pointer; }
 .login-card { position: relative; width: min(100%, 440px); padding: 48px 46px 32px; text-align: center; overflow: hidden; border: 1px solid rgba(213,179,109,.38); border-radius: 4px; background: linear-gradient(155deg, rgba(67,25,39,.97), rgba(35,10,19,.98)); box-shadow: 0 32px 90px #0d0307a6; animation: rise .75s ease both; }
 .login-card:before, .login-card:after { content: "✧"; position: absolute; color: rgba(213,179,109,.25); font-size: 54px; top: 16px; }
 .login-card:before { left: 19px; } .login-card:after { right: 19px; }
-.brand-mark { color: var(--gold-light); font-family: "Cormorant Garamond", serif; font-size: 45px; letter-spacing: .06em; }
+.brand-mark { color: var(--gold-light); font-family: "Noto Serif Kannada", "Cormorant Garamond", serif; font-size: 39px; letter-spacing: .02em; }
 .eyebrow { margin: 9px 0 14px; color: var(--gold); font-size: 10px; letter-spacing: .25em; text-transform: uppercase; }
 h1, h2, h3, .serif { font-family: "Cormorant Garamond", serif; font-weight: 500; }
 .login-card h1 { margin: 0 0 2px; font-size: 37px; }
@@ -64,6 +64,7 @@ input::placeholder { color: #806c71; }
 .page-title { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 27px; }
 .page-title h1 { margin: 0; font-size: clamp(34px, 4vw, 49px); line-height: 1; }
 .page-title p { margin: 9px 0 0; color: var(--muted); font-size: 12px; }
+.page-title .page-quote { margin-top: 10px; color: #d2b77e; font-family: "Cormorant Garamond", serif; font-size: 17px; font-style: italic; animation: fade .7s ease both; }
 .ornament { color: var(--gold); font-size: 24px; opacity: .9; }
 .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; margin-bottom: 26px; }
 .stat, .panel, .record-card { border: 1px solid var(--line); background: linear-gradient(140deg, #36141fdd, #271019f2); }
@@ -73,6 +74,7 @@ input::placeholder { color: #806c71; }
 .stat-value { margin-top: 9px; color: var(--gold-light); font-family: "Cormorant Garamond", serif; font-size: 37px; line-height: 1; }
 .grid-two { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr); gap: 16px; }
 .panel { padding: 21px; }
+.panel-note { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
 .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .panel-head h2 { margin: 0; font-size: 24px; }
 .text-action { padding: 4px 0; border: 0; color: var(--gold); background: transparent; font-size: 11px; }
@@ -105,6 +107,39 @@ tbody tr:hover { background: #d5b36d08; }
 .record-card p { margin: 7px 0 13px; color: var(--muted); font-size: 11px; }
 .card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .attendance-list { display: grid; gap: 9px; }
+.register-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-bottom: 16px; }
+.register-toolbar label { flex: 1 1 170px; min-width: 0; }
+.register-toolbar input, .register-toolbar select { margin-top: 6px; }
+.register-toolbar > .pill { margin-bottom: 11px; }
+.fee-register, .attendance-register { display: grid; gap: 8px; }
+.fee-row, .attendance-register-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 14px; border: 1px solid #d5b36d1c; background: #1c0a11a6; transition: background .2s ease, border-color .2s ease, transform .2s ease; animation: rise .35s ease both; }
+.fee-row:hover, .attendance-register-row:hover { transform: translateY(-1px); border-color: #d5b36d42; background: #32121e; }
+.fee-row > div:first-child, .attendance-register-row > div:first-child { display: grid; gap: 3px; }
+.fee-row strong, .attendance-register-row strong { color: var(--cream); font-family: "Cormorant Garamond", serif; font-size: 19px; font-weight: 500; }
+.fee-row > div:first-child > span, .attendance-register-row > div:first-child > span { color: var(--muted); font-size: 10px; }
+.fee-status-actions { display: flex; align-items: center; gap: 11px; }
+.fee-method { color: var(--muted); font-size: 10px; text-transform: capitalize; }
+.fee-toggle { display: inline-flex; min-width: 108px; align-items: center; justify-content: center; gap: 8px; padding: 8px 11px; border: 1px solid; border-radius: 30px; font-size: 11px; transition: background .2s ease, transform .2s ease; }
+.fee-toggle:hover { transform: scale(1.035); }
+.fee-toggle.is-paid { color: var(--green); border-color: #a6c49c55; background: #a6c49c12; }
+.fee-toggle.is-pending { color: var(--red); border-color: #e59b9155; background: #e59b9110; }
+.fee-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.register-month { margin: 14px 0 0; color: var(--muted); font-size: 10px; text-align: right; }
+.attendance-choice { display: flex; gap: 7px; }
+.attendance-choice label { position: relative; cursor: pointer; }
+.attendance-choice input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.attendance-choice span { display: inline-flex; min-width: 79px; justify-content: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 3px; color: var(--muted); background: #1c0a11; font-size: 10px; transition: .2s ease; }
+.choice-present input:checked + span { color: var(--green); border-color: #a6c49c70; background: #a6c49c14; }
+.choice-absent input:checked + span { color: var(--red); border-color: #e59b9170; background: #e59b9112; }
+.attendance-choice input:focus-visible + span { outline: 2px solid var(--gold); outline-offset: 2px; }
+.attendance-save { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 6px; }
+.attendance-save .form-error { flex: 1; }
+.history-register { padding: 12px 13px; border: 1px solid var(--line); background: #1c0a11a6; }
+.history-register strong { color: var(--gold-light); font-family: "Cormorant Garamond", serif; font-size: 17px; font-weight: 500; }
+.history-register p { margin: 8px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.fee-row:nth-child(2), .attendance-register-row:nth-child(2) { animation-delay: .035s; }
+.fee-row:nth-child(3), .attendance-register-row:nth-child(3) { animation-delay: .07s; }
+.fee-row:nth-child(4), .attendance-register-row:nth-child(4) { animation-delay: .105s; }
 .attendance-entry { display: grid; grid-template-columns: minmax(130px, 1.2fr) minmax(90px, .8fr) minmax(100px, .8fr) auto; align-items: center; gap: 10px; padding: 12px; border: 1px solid #d5b36d19; }
 .attendance-entry strong { font-family: "Cormorant Garamond", serif; font-size: 17px; font-weight: 500; }
 .attendance-entry select { min-width: 0; margin: 0; padding: 9px; font-size: 10px; }
@@ -117,9 +152,6 @@ tbody tr:hover { background: #d5b36d08; }
 .dialog-form label.full, .dialog-form .form-actions, .dialog-form .form-error { grid-column: 1 / -1; }
 .dialog-form input, .dialog-form select { font-size: 12px; }
 .form-actions { display: flex; justify-content: end; gap: 9px; margin-top: 3px; }
-.payment-summary { display: grid; gap: 7px; padding: 13px 14px; border: 1px solid var(--line); color: var(--muted); background: #1c0a11a6; font-size: 11px; }
-.payment-summary div { display: flex; justify-content: space-between; gap: 12px; }
-.payment-summary strong { color: var(--gold-light); font-weight: 600; }
 .toast { position: fixed; z-index: 8; right: 24px; bottom: 24px; max-width: min(440px, calc(100vw - 32px)); padding: 12px 16px; border: 1px solid #d5b36d66; color: var(--gold-light); background: #32131f; box-shadow: 0 10px 40px #0008; font-size: 12px; animation: rise .2s ease both; }
 .mobile-brand, .nav-toggle { display: none; }
 .loading { padding: 60px; color: var(--gold); text-align: center; font-family: "Cormorant Garamond", serif; font-size: 24px; }
@@ -154,4 +186,30 @@ tbody tr:hover { background: #d5b36d08; }
   .dialog-form { grid-template-columns: 1fr; }
   .dialog-form label.full, .dialog-form .form-actions, .dialog-form .form-error { grid-column: auto; }
   .login-card { padding: 42px 26px 28px; }
+  .today { max-width: 125px; text-align: right; }
+  .page-title { gap: 8px; margin-bottom: 20px; }
+  .page-title h1 { font-size: clamp(31px, 9vw, 38px); }
+  .page-title .page-quote { max-width: 290px; font-size: 16px; }
+  .panel { padding: 15px; }
+  .panel-head { align-items: flex-start; }
+  .register-toolbar { align-items: stretch; gap: 9px; }
+  .register-toolbar label, .register-toolbar > .pill { flex-basis: 100%; width: 100%; margin-bottom: 0; }
+  .register-toolbar input, .register-toolbar select { width: 100%; }
+  .fee-row, .attendance-register-row { align-items: flex-start; padding: 11px; }
+  .fee-row strong, .attendance-register-row strong { font-size: 17px; }
+  .fee-status-actions { flex-wrap: wrap; justify-content: end; gap: 7px; }
+  .fee-method { width: 100%; text-align: right; }
+  .fee-toggle { min-width: 94px; padding: 8px; }
+  .attendance-register-row { flex-direction: column; }
+  .attendance-choice { width: 100%; }
+  .attendance-choice label { flex: 1; }
+  .attendance-choice span { width: 100%; }
+  .attendance-save { align-items: stretch; flex-direction: column; }
+  .attendance-save .button { width: 100%; }
+  .toolbar input, .toolbar select { width: 100%; }
+  .table-wrap { max-width: calc(100vw - 62px); }
+  .login-screen { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

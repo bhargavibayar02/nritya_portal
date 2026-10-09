@@ -1,6 +1,6 @@
 create table if not exists public.portal_records (
   id uuid primary key,
-  kind text not null check (kind in ('branches', 'students', 'classes', 'payments')),
+  kind text not null check (kind in ('branches', 'students', 'classes', 'payments', 'fees', 'attendance')),
   payload jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now()
 );
@@ -10,9 +10,12 @@ alter table public.portal_records
 
 alter table public.portal_records
   add constraint portal_records_kind_check
-  check (kind in ('branches', 'students', 'classes', 'payments'));
+  check (kind in ('branches', 'students', 'classes', 'payments', 'fees', 'attendance'));
 
 create index if not exists portal_records_kind_idx on public.portal_records (kind);
+create unique index if not exists portal_records_monthly_fee_idx
+  on public.portal_records ((payload->>'studentId'), (payload->>'month'))
+  where kind = 'fees';
 
 alter table public.portal_records enable row level security;
 
