@@ -12,7 +12,7 @@ A single-admin class portal for branches, students, attendance, classes, and fee
 
 1. Push this project to a private GitHub repository, then import that repository in Vercel.
 2. In Vercel, open **Project → Settings → Environment Variables** and add:
-   - `ADMIN_USERNAME` — `bhargavi`
+   - `ADMIN_USERNAME` — Choose your Usernsme
    - `ADMIN_PASSWORD` — choose the password you will use on the portal's login screen.
    - `SESSION_SECRET` — generate a private random value with `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"`.
    - `SUPABASE_URL` — the Supabase Project URL.
