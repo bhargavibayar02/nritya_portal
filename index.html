@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#260c13">
+    <meta name="description" content="A considered, traditional home for your Bharatanatyam classes.">
+    <title>Nritya · Class Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/style.css">
+  </head>
+  <body>
+    <div id="app">
+      <main class="login-screen">
+        <section class="login-card">
+          <div class="brand-mark" aria-hidden="true">नृत्य</div>
+          <p class="eyebrow">A Bharatanatyam studio</p>
+          <h1>Welcome, teacher</h1>
+          <p class="muted">Sign in to your class sanctuary.</p>
+          <form id="login-form" class="stack">
+            <label>Admin username<input name="username" autocomplete="username" required></label>
+            <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+            <p class="form-error" aria-live="polite"></p>
+            <button class="button button-gold" type="submit">Enter the studio <span>↗</span></button>
+          </form>
+          <div class="login-ornament" aria-hidden="true">✦　❋　✦</div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
